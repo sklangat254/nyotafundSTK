@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Pesa Payment - Secure Checkout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a4d3c;
+            --primary-light: #0f6b51;
+            --accent: #d4af37;
+            --text-dark: #1a1a1a;
+            --text-gray: #666666;
+            --bg-light: #f8f9fa;
+            --border: #e1e8e5;
+            --success: #16a34a;
+            --error: #dc2626;
+            --shadow: rgba(10, 77, 60, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f0ed 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 
+                0 4px 6px var(--shadow),
+                0 12px 24px var(--shadow),
+                0 0 0 1px var(--border);
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(10, 77, 60, 0.15);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+            fill: white;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(10, 77, 60, 0.08);
+            transform: translateY(-1px);
+        }
+
+        input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: var(--text-gray);
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        input[type="number"] {
+            padding-left: 60px;
+        }
+
+        input[type="tel"] {
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Manrope', sans-serif;
+            margin-top: 32px;
+            box-shadow: 0 4px 12px rgba(10, 77, 60, 0.2);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 77, 60, 0.3);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading .btn-text {
+            display: none;
+        }
+
+        .loading .spinner {
+            display: block;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .secure-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--success);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: var(--success);
+            border: 2px solid var(--success);
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: var(--error);
+            border: 2px solid var(--error);
+            display: block;
+        }
+
+        .info-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .payment-card {
+                padding: 36px 24px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .submit-btn {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="payment-card">
+            <div class="header">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17,8C17,5.24 14.76,3 12,3C9.24,3 7,5.24 7,8C7,10.76 9.24,13 12,13C14.76,13 17,10.76 17,8M1,18C1,15.34 6.33,14 9,14C9.67,14 10.53,14.09 11.5,14.28C10.84,15.06 10.29,15.97 9.91,17L2,17C2,16.45 4.45,15 9,15C9.21,15 9.42,15 9.65,15.03C9.23,15.64 8.89,16.31 8.65,17L1,17M21,17L15,17C15,15.9 15.45,14.9 16.17,14.17C16.9,13.45 17.9,13 19,13C20.1,13 21.1,13.45 21.83,14.17C22.55,14.9 23,15.9 23,17M19,11C17.9,11 17,10.1 17,9C17,7.9 17.9,7 19,7C20.1,7 21,7.9 21,9C21,10.1 20.1,11 19,11Z"/>
+                    </svg>
+                </div>
+                <h1>Secure Payment</h1>
+                <p class="subtitle">Complete your M-Pesa transaction</p>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        placeholder="John Doe" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="254712345678" 
+                        pattern="254[0-9]{9}"
+                        required
+                    >
+                    <small style="display: block; margin-top: 6px; color: var(--text-gray); font-size: 12px;">Format: 254XXXXXXXXX</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <div class="amount-input">
+                        <span class="currency-prefix">KES</span>
+                        <input 
+                            type="number" 
+                            id="amount" 
+                            name="amount" 
+                            placeholder="1000" 
+                            min="1"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Pay Now</span>
+                    <div class="spinner"></div>
+                </button>
+
+                <div class="secure-badge">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.1 14.8,9.5V11C15.4,11 16,11.6 16,12.3V15.8C16,16.4 15.4,17 14.7,17H9.2C8.6,17 8,16.4 8,15.7V12.2C8,11.6 8.6,11 9.2,11V9.5C9.2,8.1 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,9.5V11H13.5V9.5C13.5,8.7 12.8,8.2 12,8.2Z"/>
+                    </svg>
+                    Secured by PayHero & M-Pesa
+                </div>
+            </form>
+
+            <div id="message" class="message"></div>
+
+            <div class="info-text">
+                You will receive an M-Pesa prompt on your phone.<br>
+                Enter your PIN to complete the payment.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('paymentForm');
+        const submitBtn = form.querySelector('.submit-btn');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
+
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                amount: parseFloat(document.getElementById('amount').value)
+            };
+            
+            try {
+                const response = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('success', result.message || 'Payment request sent! Please check your phone for the M-Pesa prompt.');
+                    form.reset();
+                } else {
+                    showMessage('error', result.message || 'Payment failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('error', 'An error occurred. Please try again.');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        });
+
+        function showMessage(type, text) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messageDiv.style.display = 'block';
+        }
+
+        // Auto-format phone number
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('0')) {
+                value = '254' + value.substring(1);
+            } else if (value.startsWith('7') || value.startsWith('1')) {
+                value = '254' + value;
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
